@@ -108,7 +108,8 @@ EntryFormset = forms.modelformset_factory(
   widgets={'value_short': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Value'}),
   'value_long': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Value', 'style': 'height: 5em;'}),
   'value_bool': forms.CheckboxInput(attrs={'class': 'form-control',}),
-  }
+  },
+  extra=200 # find a more efficient way of doing this
 )
 
 # FILTERS

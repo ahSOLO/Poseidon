@@ -4,9 +4,10 @@
 
 {% block content %}
 
+{% load template_tags %}
 <form class="form-horizontal" method="POST" action="">
   {% csrf_token %}
-  {{ formset.management_form }} {% for form in formset %} 
+  {{ formset.management_form }} {% for form, schema_entry in formset|zip:schema_entries  %} 
   <div class="row form-row spacer">
     <div class="col-2">
       <label>{{form.key.label}}</label>
@@ -14,7 +15,16 @@
     <div class="col-10">
       <div class="input-group">
         <table>
-        {{form.as_table}}
+        {{ schema_entry.description }}
+        {% if schema_entry.entry_type == 'SHORT' %}
+        {{ form.value_short }}
+        {% endif %}
+        {% if schema_entry.entry_type == 'LONG'%}
+        {{ form.value_long }}
+        {% endif %}
+        {% if schema_entry.entry_type == 'BOOL' %}
+        {{ form.value_bool }}
+        {% endif %}
         </table>
         <div class="input-group-append">
           <button class="btn btn-success add-form-row">+</button>

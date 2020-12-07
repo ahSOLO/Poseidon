@@ -46,6 +46,9 @@ class TemplateSchemaEntry(models.Model):
   created = models.DateTimeField(auto_now_add=True, editable=False)
   last_updated = models.DateTimeField(auto_now=True, editable=False)
 
+  def __str__(self):
+    return self.key
+
 class EntrySet(models.Model):
   # Relationships
   template_schema = models.ForeignKey("docs.TemplateSchema", on_delete=models.CASCADE)
@@ -56,7 +59,7 @@ class EntrySet(models.Model):
   last_updated = models.DateTimeField(auto_now=True, editable=False)
 
   def __str__(self):
-    return "created: " + self.created + ", last updated: " + self.last_updated
+    return str(self.user) + ", created: " + str(self.created) + ", last updated: " + str(self.last_updated)
 
 class Entry(models.Model):
   # Relationships
@@ -71,4 +74,11 @@ class Entry(models.Model):
   last_updated = models.DateTimeField(auto_now=True, editable=False)
 
   def __str__(self):
-    return value_short + value_long + str(value_bool)
+    output = ""
+    if self.value_short:
+      output += self.value_short
+    if self.value_long:
+      output += self.value_long
+    if self.value_bool:
+      output += str(self.value_bool)
+    return output
