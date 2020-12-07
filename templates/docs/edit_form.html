@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Form {% endblock title %}
+
+{% block content %}
+
+<form class="form-horizontal" method="POST" action="">
+  {% csrf_token %}
+  {{ formset.management_form }} {% for form in formset %}
+  <div class="row form-row spacer">
+    <div class="col-2">
+      <label>{{form.key.label}}</label>
+    </div>
+    <div class="col-10">
+      <div class="input-group">
+        <table>
+        {{form.as_table}}
+        </table>
+        <!-- {{form.key}} {{form.description}} {{form.entry_type}} -->
+        <div class="input-group-append">
+          <button class="btn btn-success add-form-row">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  {% endfor %}
+  <div class="row spacer">
+    <div class="col-4 offset-2">
+      <button type="submit" class="btn btn-block btn-primary">
+        Create
+      </button>
+    </div>
+  </div>
+</form>
+{% endblock content %}
+
+{% block scripts %}
+{{ block.super }}
+<script type="text/javascript">
+  function updateElementIndex(el, prefix, ndx) {
+    var id_regex = new RegExp("(" + prefix + "-\\d+)"); // Regular expression for the id, captures strings matching 'form-xxx' where xxx represents digits.
+    var replacement = prefix + "-" + ndx; // replacement = prefix-index
+    if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement)); // If element has 'for' attribute, replace its id with the replacement.
+    if (el.id) el.id = el.id.replace(id_regex, replacement); // If element has an id, replace its id with the replacement
+    if (el.name) el.name = el.name.replace(id_regex, replacement); // If element has a name, replace its id with the replacement
+  }
+  function cloneMore(selector, prefix) {
+    var newElement = $(selector).clone(true); // clone the last form row and assign it to newElement
+    var total = $("#id_" + prefix + "-TOTAL_FORMS").val(); // get the value of id_form-TOTAL_FORMS
+    newElement
+      .find(
+        ":input:not([type=button]):not([type=submit]):not([type=reset])" // in the newly cloned row, get the descendents that are inputs but not buttons, submits, or resets 
+      )
+      .each(function () { // for each of the selected input elements, 
+        var name = $(this).attr("name") // select the name attribute
+        if (name) { // if the name attribute exists
+          name = name.replace("-" + (total - 1) + "-", "-" + total + "-"); // replace the string -x- where x is the total-1 number of forms with -y- where y is the total number of forms
+          var id = "id_" + name;
+          $(this).attr({ 'name': name, 'id': id }).val("").removeAttr("checked"); // for the name and id attributes, set the value to 0 and remove any checkboxes
+        }  
+      });
+    newElement.find("select").val("SHORT") // Set the default selection to SHORT - my addition
+    newElement.find("label").each(function () { // for each label element of the new row
+      var forValue = $(this).attr("for"); // select the for attribute and assign it to forValue
+      if (forValue) { // if the for attribute exists
+        forValue = forValue.replace("-" + (total - 1) + "-", "-" + total + "-"); // replace -x- with -y- where x is total-1 and y is total
+        $(this).attr({ "for": forValue }); // set the value of the for attribute to the newly replaced value
+      }
+    });
+    total++; // increase the total by 1
+    $("#id_" + prefix + "-TOTAL_FORMS").val(total); // set id_form-TOTAL_FORMS to the new total
+    $(selector).after(newElement); // insert newElement after the last form row 
+    var conditionRow = $(".form-row:not(:last)"); // for each row that is NOT the last
+    conditionRow
+      .find(".btn.add-form-row") // find the add-form-row button 
+      .removeClass("btn-success") // remove the btn-success class 
+      .addClass("btn-danger") // add the btn-danger class
+      .removeClass("add-form-row") // remove the add-form-row class
+      .addClass("remove-form-row") // add the remove-form-row class
+      .html(
+        '<span>–</span>' // add the minus symbol
+      );
+    return false;
+  }
+  function deleteForm(prefix, btn) {
+    var total = parseInt($("#id_" + prefix + "-TOTAL_FORMS").val()); // Select the element that matches 'id_form-TOTAL_FORMS' and get its value
+    if (total > 1) { // If its value is greater than 1
+      btn.closest(".form-row").remove(); // traverses up the ancestor tree of the remove button pressed and selects the 'form-row' element, then removes it
+      var forms = $(".form-row"); // select all form rows and assigns it to the variable forms
+      $("#id_" + prefix + "-TOTAL_FORMS").val(forms.length); // set the value of the element containing 'id_form-TOTAL_FORMS' to the total number of form rows
+      for (var i = 0, formCount = forms.length; i < formCount; i++) { // for each form row, 
+        $(forms.get(i))
+          .find(":input") // find the input element
+          .each(function () {
+            updateElementIndex(this, prefix, i); // and update the index number within the name, id and for attribute to reflect the new order of forms
+          });
+      }
+    }
+    return false;
+  }
+  $(document).on("click", ".add-form-row", function (e) { // If the add-form-row button is clicked,
+    e.preventDefault(); // ignore default action (e.g. do not POST)
+    cloneMore(".form-row:last", "form"); // run cloneMore function on last table with a class of form-row
+    return false;
+  });
+  $(document).on("click", ".remove-form-row", function (e) { // If the remove-form-row button is clicked
+    e.preventDefault(); // ignore default action 
+    deleteForm("form", $(this)); // run deleteForm function on the selected button
+    return false;
+  });
+</script>
+{% endblock scripts %}
