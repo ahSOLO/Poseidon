@@ -17,6 +17,7 @@ class HomePageView(TemplateView):
 
 # Upload Template - receives docx file
 def upload_template(request):
+    # To Do: Show helper text that explains what the description is going to be used for
     if request.method == 'POST':
         form = TemplateForm(request.POST, request.FILES)
         if form.is_valid():
@@ -101,6 +102,7 @@ def edit_schema(request, schema_id):
 
 # Populate a schema and create documents
 def pop_schema(request, schema_id, entryset_id=""): # entryset_id is an optional parameter
+    # To do: Show the name and description of the template that is being used to populate the form
     schema = TemplateSchema.objects.get(pk=schema_id) # get schema object from ID
     # Authentication check
     if schema.user != request.user:

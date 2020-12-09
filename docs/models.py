@@ -40,7 +40,7 @@ class TemplateSchemaEntry(models.Model):
 
   # Fields
   order = models.PositiveSmallIntegerField()
-  key = models.CharField(max_length=50, unique=True)
+  key = models.CharField(max_length=50)
   description = models.TextField(max_length=250)
   entry_type = models.CharField(max_length=10, choices=ENTRY_TYPES, default=SHORT,)
   created = models.DateTimeField(auto_now_add=True, editable=False)
@@ -48,6 +48,14 @@ class TemplateSchemaEntry(models.Model):
 
   def __str__(self):
     return self.key
+  
+  class Meta:
+      constraints = [
+          models.UniqueConstraint(
+              fields=['template_schema', 'key'], 
+              name='unique key'
+          )
+      ]
 
 class EntrySet(models.Model):
   # Relationships
