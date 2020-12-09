@@ -89,10 +89,6 @@ TemplateSchemaEntryFormset = forms.modelformset_factory(
 
 # Entry form
 class EntryForm(forms.ModelForm):
-  # key ??
-  # description ??
-  # entry_type ??
-
   value_short = forms.CharField(max_length=50)
   value_long = forms.CharField(max_length=800)
   value_bool = forms.BooleanField(initial=False)
@@ -109,7 +105,7 @@ EntryFormset = forms.modelformset_factory(
   'value_long': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Value', 'style': 'height: 5em;'}),
   'value_bool': forms.CheckboxInput(attrs={'class': 'form-control',}),
   },
-  extra=200 # find a more efficient way of doing this
+  extra=200 # TO DO: find a more efficient way of having a dynamic formset size
 )
 
 # FILTERS
