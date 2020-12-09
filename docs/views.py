@@ -3,6 +3,9 @@ from django.views.generic import TemplateView
 from django.http import FileResponse, HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 
+from io import BytesIO
+from docxtpl import DocxTemplate
+
 from .forms import TemplateForm, TemplateFilter, TemplateChoiceDelete, TemplateSchemaForm, TemplateSelection, TemplateSchemaSelection, TemplateSchemaEntryFormset, EntryFormset
 from .models import Template, TemplateSchema, TemplateSchemaEntry, EntrySet, Entry
 
@@ -82,23 +85,47 @@ def edit_schema(request, schema_id):
 
 def pop_schema(request, schema_id, entryset_id=""):
     schema = TemplateSchema.objects.get(pk=schema_id)
+    schema_entries = TemplateSchemaEntry.objects.filter(template_schema=schema_id)
     if (entryset_id != ""):
         entryset = EntrySet.objects.get(pk=entryset_id)
+    else: 
+        entryset = EntrySet.objects.create(template_schema=schema, user=request.user)
     if schema.user != request.user:
         return HttpResponse('You are not authorized to view this page.', status=401)
     if request.method == 'GET':
-        if (entryset_id != ""):
-            formset = EntryFormset(request.GET, queryset=Entry.objects.filter(entryset=entryset))
-        else: 
-            formset = EntryFormset()
+        formset = EntryFormset(queryset=Entry.objects.filter(entryset=entryset))
     if request.method == 'POST':
         formset = EntryFormset(request.POST, queryset=Entry.objects.filter(entryset=entryset))
         if formset.is_valid():
-            old_obj = Entry.objects.filter(entry_set=entryset)
-            print("\nNOW DELETING\n" + str(old_obj))
-            for form in formset:
-                if form.cleaned_data.get('value_short') or form.cleaned_data.get('value_long') or form.cleaned_data.get('value_bool'):
-                    obj = form.save(commit=False)
-                    print("\nNOW READY TO ACCEPT MISSING FIELDS\n")
-            return HttpResponseRedirect('success/')
-    return render(request, 'docs/pop_form.html', {'formset': formset, })
+            if 'save_entries' in request.POST:
+                old_obj = Entry.objects.filter(entryset=entryset)
+                old_obj.delete()
+                for form, schema_entry in zip(formset, schema_entries):
+                    if form.cleaned_data.get('value_short') or form.cleaned_data.get('value_long') or form.cleaned_data.get('value_bool'):
+                        obj = form.save(commit=False)
+                        obj.entryset_id = entryset.id
+                        obj.schema_entry_id = schema_entry.id
+                        obj.save()
+                    return HttpResponseRedirect('')
+            if 'create_doc' in request.POST:
+                dic = {}
+                for form, schema_entry in zip(formset, schema_entries):
+                    value_short = form.cleaned_data.get('value_short')
+                    value_long = form.cleaned_data.get('value_long')
+                    value_bool = form.cleaned_data.get('value_bool')
+                    if value_short:
+                        value = value_short
+                    elif value_long:
+                        value = value_long
+                    elif value_bool:
+                        value = value_bool
+                    else: 
+                        continue
+                    dic[schema_entry.key] = value
+                tpl = DocxTemplate(Template.objects.get(templateschema = schema).docx_file)
+                byte_io = BytesIO() #create a file-like object
+                tpl.render(dic)
+                tpl.save(byte_io) #save data to a file-like object
+                byte_io.seek(0) #go to the beginning of a file-like object
+                return FileResponse(byte_io, as_attachment=True, filename=f'generated.docx')
+    return render(request, 'docs/pop_form.html', {'formset':formset, 'schema_entries': schema_entries})
