@@ -6,7 +6,7 @@ from django.urls import reverse
 from io import BytesIO
 from docxtpl import DocxTemplate
 
-from .forms import TemplateForm, TemplateFilter, TemplateChoiceDelete, TemplateSchemaForm, TemplateSelection, TemplateSchemaSelection, TemplateSchemaEntryFormset, EntryFormset
+from .forms import TemplateForm, TemplateFilter, TemplateChoiceDelete, TemplateSchemaForm, TemplateSchemaNameForm, TemplateSelection, TemplateSchemaSelection, TemplateSchemaEntryFormset, EntryFormset
 from .models import Template, TemplateSchema, TemplateSchemaEntry, EntrySet, Entry
 
 # Create your views here.
@@ -24,7 +24,10 @@ def upload_template(request):
             obj = form.save(commit=False)
             obj.user = request.user
             obj.save()
-            return HttpResponseRedirect('success/') # TO DO: redirect to schema creation screen?
+            if 'upload_button' in request.POST:
+                return HttpResponseRedirect(reverse('docs:manage_templates')) # TO DO: redirect to schema creation screen?
+            if 'create_schema_button' in request.POST:
+                return HttpResponseRedirect(reverse('docs:create_schema', args=[obj.pk]))
     else:
         form = TemplateForm #displays an empty form
     return render(request, 'docs/upload.html', {'form': form})
@@ -72,7 +75,25 @@ def manage_schemas(request):
         populate_form = TemplateSchemaSelection(user=request.user)
     return render(request, 'docs/manage_forms.html', {'selection_form2': selection_form2, 'creation_form': creation_form, 'populate_form': populate_form}) # removed selection_form
 
-# Create / edit a Schema
+# Create a Schema given a template id
+def create_schema(request, template_id):
+    template = Template.objects.get(pk=template_id)
+    # Authentication check
+    if template.user != request.user:
+        return HttpResponse('You are not authorized to view this page.', status=401)
+    if request.method == 'POST':
+        form = TemplateSchemaNameForm(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.user = request.user
+            obj.template = template
+            obj.save()
+            return HttpResponseRedirect(reverse('docs:edit_schema', args=[obj.pk]))
+    else:
+        form = TemplateSchemaNameForm
+    return render(request, 'docs/create_form.html', {'form': form} )
+    
+# Create Schema Entries / edit a Schema
 def edit_schema(request, schema_id):
     schema = TemplateSchema.objects.get(pk=schema_id)
     # Authentication check

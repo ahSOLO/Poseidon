@@ -41,6 +41,15 @@ class TemplateSchemaForm(forms.ModelForm):
       super(TemplateSchemaForm, self).__init__(*args, **kwargs)
       self.fields['template'].queryset = Template.objects.filter(user=user)
 
+
+# TemplateSchema name form
+class TemplateSchemaNameForm(forms.ModelForm):
+  name = forms.CharField(max_length=50)
+
+  class Meta:
+    model = TemplateSchema
+    fields = ['name']
+
 # Template selection form
 class TemplateSelection(forms.Form):
   template = forms.ModelChoiceField(queryset=Template.objects.all())
