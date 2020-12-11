@@ -41,6 +41,15 @@ class TemplateSchemaForm(forms.ModelForm):
       super(TemplateSchemaForm, self).__init__(*args, **kwargs)
       self.fields['template'].queryset = Template.objects.filter(user=user)
 
+
+# TemplateSchema name form
+class TemplateSchemaNameForm(forms.ModelForm):
+  name = forms.CharField(max_length=50)
+
+  class Meta:
+    model = TemplateSchema
+    fields = ['name']
+
 # Template selection form
 class TemplateSelection(forms.Form):
   template = forms.ModelChoiceField(queryset=Template.objects.all())
@@ -86,6 +95,16 @@ TemplateSchemaEntryFormset = forms.modelformset_factory(
   'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe the Variable', 'style': 'height: 5em;'})
   }
 )
+
+# EntrySet selection form
+class EntrySetSelection(forms.Form):
+  entryset = forms.ModelChoiceField(queryset=EntrySet.objects.all())
+
+  # Limit results to EntrySet owned by the current user
+  def __init__(self, *args, **kwargs):
+      user = kwargs.pop('user')
+      super(EntrySetSelection, self).__init__(*args, **kwargs)
+      self.fields['entryset'].queryset = EntrySet.objects.filter(user=user)
 
 # Entry form
 class EntryForm(forms.ModelForm):

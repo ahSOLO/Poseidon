@@ -2,7 +2,7 @@
 
 {% block content %}
     <p> <b> Search </b> </p>
-    <form method="get">
+    <form action="" method="get">
         {{ filter.form.as_p }}
         <input type="submit" value="Search" />
     </form>
@@ -11,7 +11,7 @@
     {% endfor %}
     <br>
     <p><b> Delete Templates </b></p>
-    <form method="post">
+    <form action="" method="post">
         {% csrf_token %}
         {{ choice_form.as_p }}
       <input type="submit" onclick="return confirm('Are you sure? This will delete the selected template(s)')" value="Delete">

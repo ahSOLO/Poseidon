@@ -6,7 +6,7 @@ from django.urls import reverse
 from io import BytesIO
 from docxtpl import DocxTemplate
 
-from .forms import TemplateForm, TemplateFilter, TemplateChoiceDelete, TemplateSchemaForm, TemplateSelection, TemplateSchemaSelection, TemplateSchemaEntryFormset, EntryFormset
+from .forms import TemplateForm, TemplateFilter, TemplateChoiceDelete, TemplateSchemaForm, TemplateSchemaNameForm, TemplateSelection, TemplateSchemaSelection, TemplateSchemaEntryFormset, EntryFormset, EntrySetSelection
 from .models import Template, TemplateSchema, TemplateSchemaEntry, EntrySet, Entry
 
 # Create your views here.
@@ -24,7 +24,10 @@ def upload_template(request):
             obj = form.save(commit=False)
             obj.user = request.user
             obj.save()
-            return HttpResponseRedirect('success/') # TO DO: redirect to schema creation screen?
+            if 'upload_button' in request.POST:
+                return HttpResponseRedirect(reverse('docs:manage_templates')) # TO DO: redirect to schema creation screen?
+            if 'create_schema_button' in request.POST:
+                return HttpResponseRedirect(reverse('docs:create_schema', args=[obj.pk]))
     else:
         form = TemplateForm #displays an empty form
     return render(request, 'docs/upload.html', {'form': form})
@@ -45,34 +48,60 @@ def manage_templates(request):
 
 # Manage Schemas (Forms)
 def manage_schemas(request):
-    # Edit an existing schema
     if request.method== 'GET': # TO DO: Allow user to filter by template
         # selection_form = TemplateSelection(request.GET, user=request.user)
         selection_form2 = TemplateSchemaSelection(request.GET, user=request.user)
-        if selection_form2.is_valid():
-            obj2 = selection_form2.cleaned_data.get('template_schema')
-            return HttpResponseRedirect(reverse('docs:edit_schema', args=[obj2.pk]))
+        selection_form3 = EntrySetSelection(request.GET, user=request.user)
+        # Edit an existing schema
+        if 'edit_schema' in request.GET:
+            if selection_form2.is_valid():
+                obj = selection_form2.cleaned_data.get('template_schema')
+                return HttpResponseRedirect(reverse('docs:edit_schema', args=[obj.pk]))
+        # Edit an existing entryset
+        if 'edit_entryset' in request.GET:
+            if selection_form3.is_valid():
+                obj2 = selection_form3.cleaned_data.get('entryset')
+                schema = obj2.template_schema
+                return HttpResponseRedirect(reverse('docs:edit_entryset', args=[schema.pk, obj2.pk]))
     if request.method == 'POST':
         # Create a new schema and edit it
-        if 'create_form' in request.POST:
+        if 'create_schema' in request.POST:
             creation_form = TemplateSchemaForm(request.POST, user=request.user)
             if creation_form.is_valid():
-                obj = creation_form.save(commit=False)
-                obj.user = request.user
-                obj.save()
-                return HttpResponseRedirect(reverse('docs:edit_schema', args=[obj.pk]))
+                obj3 = creation_form.save(commit=False)
+                obj3.user = request.user
+                obj3.save()
+                return HttpResponseRedirect(reverse('docs:edit_schema', args=[obj3.pk]))
         # Populate an existing schema
-        if 'pop_form' in request.POST:
+        if 'pop_schema' in request.POST:
             populate_form = TemplateSchemaSelection(request.POST, user=request.user)
             if populate_form.is_valid():
-                obj3 = populate_form.cleaned_data.get('template_schema')
-                return HttpResponseRedirect(reverse('docs:pop_schema', args=[obj3.pk]))
+                obj4 = populate_form.cleaned_data.get('template_schema')
+                return HttpResponseRedirect(reverse('docs:pop_schema', args=[obj4.pk]))
     else:
         creation_form = TemplateSchemaForm(user=request.user)
         populate_form = TemplateSchemaSelection(user=request.user)
-    return render(request, 'docs/manage_forms.html', {'selection_form2': selection_form2, 'creation_form': creation_form, 'populate_form': populate_form}) # removed selection_form
+    return render(request, 'docs/manage_forms.html', {'selection_form2': selection_form2, 'selection_form3': selection_form3, 'creation_form': creation_form, 'populate_form': populate_form}) # removed selection_form
 
-# Create / edit a Schema
+# Create a Schema given a template id
+def create_schema(request, template_id):
+    template = Template.objects.get(pk=template_id)
+    # Authentication check
+    if template.user != request.user:
+        return HttpResponse('You are not authorized to view this page.', status=401)
+    if request.method == 'POST':
+        form = TemplateSchemaNameForm(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.user = request.user
+            obj.template = template
+            obj.save()
+            return HttpResponseRedirect(reverse('docs:edit_schema', args=[obj.pk]))
+    else:
+        form = TemplateSchemaNameForm
+    return render(request, 'docs/create_form.html', {'form': form} )
+    
+# Create Schema Entries / edit a Schema
 def edit_schema(request, schema_id):
     schema = TemplateSchema.objects.get(pk=schema_id)
     # Authentication check
@@ -97,7 +126,10 @@ def edit_schema(request, schema_id):
                     obj.order = counter
                     counter += 1
                     obj.save()
-            return HttpResponseRedirect('success/')
+            if "save_button" in request.POST:
+                return HttpResponseRedirect(reverse('docs:manage_schemas'))
+            if "save_pop_button" in request.POST:
+                return HttpResponseRedirect(reverse('docs:pop_schema', args=[schema_id]))
     return render(request, 'docs/edit_form.html', {'formset': formset})
 
 # Populate a schema and create documents
