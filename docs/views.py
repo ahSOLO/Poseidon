@@ -118,7 +118,10 @@ def edit_schema(request, schema_id):
                     obj.order = counter
                     counter += 1
                     obj.save()
-            return HttpResponseRedirect('success/')
+            if "save_button" in request.POST:
+                return HttpResponseRedirect(reverse())
+            if "save_pop_button" in request.POST:
+                return HttpResponseRedirect(reverse())
     return render(request, 'docs/edit_form.html', {'formset': formset})
 
 # Populate a schema and create documents
