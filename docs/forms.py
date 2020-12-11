@@ -96,6 +96,16 @@ TemplateSchemaEntryFormset = forms.modelformset_factory(
   }
 )
 
+# EntrySet selection form
+class EntrySetSelection(forms.Form):
+  entryset = forms.ModelChoiceField(queryset=EntrySet.objects.all())
+
+  # Limit results to EntrySet owned by the current user
+  def __init__(self, *args, **kwargs):
+      user = kwargs.pop('user')
+      super(EntrySetSelection, self).__init__(*args, **kwargs)
+      self.fields['entryset'].queryset = EntrySet.objects.filter(user=user)
+
 # Entry form
 class EntryForm(forms.ModelForm):
   value_short = forms.CharField(max_length=50)
