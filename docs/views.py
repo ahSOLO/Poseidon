@@ -25,7 +25,7 @@ def upload_template(request):
             obj.user = request.user
             obj.save()
             if 'upload_button' in request.POST:
-                return HttpResponseRedirect(reverse('docs:manage_templates')) # TO DO: redirect to schema creation screen?
+                return HttpResponseRedirect(reverse('docs:manage_templates'))
             if 'create_schema_button' in request.POST:
                 return HttpResponseRedirect(reverse('docs:create_schema', args=[obj.pk]))
     else:
