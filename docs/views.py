@@ -32,7 +32,7 @@ def upload_template(request):
         form = TemplateForm #displays an empty form
     return render(request, 'docs/upload.html', {'form': form})
 
-# Manage templates - 
+# Manage templates 
 def manage_templates(request):
     # Search for Template
     if request.method == 'GET':
