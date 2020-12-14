@@ -8,8 +8,8 @@ from .constants import ENTRY_TYPES, SHORT, LONG, BOOL
 
 # Template upload form
 class TemplateForm(forms.ModelForm):
-  name = forms.CharField(max_length=50)
-  description = forms.CharField(max_length=250, required=False, widget=forms.Textarea)
+  name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder': 'Please name your form'}))
+  description = forms.CharField(max_length=250, required=False, widget=forms.Textarea(attrs={'placeholder': 'Please describe the contents of your form'}))
   docx_file = forms.FileField(label="Select a file", help_text="Max. 5 megabytes", validators=[file_size])
 
   class Meta:
@@ -40,7 +40,6 @@ class TemplateSchemaForm(forms.ModelForm):
       user = kwargs.pop('user')
       super(TemplateSchemaForm, self).__init__(*args, **kwargs)
       self.fields['template'].queryset = Template.objects.filter(user=user)
-
 
 # TemplateSchema name form
 class TemplateSchemaNameForm(forms.ModelForm):

@@ -42,9 +42,10 @@ def manage_templates(request):
         choice_form = TemplateChoiceDelete(request.POST, user=request.user)
         if choice_form.is_valid():
             choice_form.cleaned_data['name'].delete()
+            return HttpResponseRedirect(reverse('docs:manage_templates'))
     else:
         choice_form = TemplateChoiceDelete(user=request.user)
-    return render(request, 'docs/manage_templates.html', {'filter': f, 'choice_form': choice_form})
+    return render(request, 'docs/manage_templates.html', {'filter': f, 'choice_form': choice_form}) #TO DO: investigate error after deleting multiple files
 
 # Manage Schemas (Forms)
 def manage_schemas(request):

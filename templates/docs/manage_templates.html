@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+{% load crispy_forms_tags %}
+
     <p> <b> Search </b> </p>
     <form action="" method="get">
-        {{ filter.form.as_p }}
+        {{ filter.form|crispy }}
         <input type="submit" value="Search" />
     </form>
     {% for obj in filter.qs %}
@@ -13,7 +16,7 @@
     <p><b> Delete Templates </b></p>
     <form action="" method="post">
         {% csrf_token %}
-        {{ choice_form.as_p }}
+        {{ choice_form|crispy }}
       <input type="submit" onclick="return confirm('Are you sure? This will delete the selected template(s)')" value="Delete">
     </form>
 {% endblock %}
