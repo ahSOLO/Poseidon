@@ -145,6 +145,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # E-mail backend - Sendgrid
 EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
-DEFAULT_FROM_EMAIL = 'junmenghan@hotmail.com'
+DEFAULT_FROM_EMAIL = 'poseidondocuments@gmail.com'
 SENDGRID_API_KEY = os.environ['SENDGRID_API_KEY']
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False
