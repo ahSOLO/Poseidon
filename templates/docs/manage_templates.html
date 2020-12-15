@@ -1,19 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <p> <b> Search </b> </p>
-    <form action="" method="get">
-        {{ filter.form.as_p }}
-        <input type="submit" value="Search" />
+
+{% load crispy_forms_tags %}
+    <h3>Upload a Template</h3>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ upload_form|crispy }}
+        <button class="btn btn-success ml-2" name="upload_button" type="submit">Upload</button>
+        <button class="btn btn-success ml-2" name="create_schema_button" type="submit">Upload and Create a Form</button>
     </form>
-    {% for obj in filter.qs %}
-        {{ obj.name }} | {{ obj.description }}<br />
-    {% endfor %}
     <br>
-    <p><b> Delete Templates </b></p>
+    <h3>Delete Template(s)</h3>
     <form action="" method="post">
         {% csrf_token %}
-        {{ choice_form.as_p }}
-      <input type="submit" onclick="return confirm('Are you sure? This will delete the selected template(s)')" value="Delete">
+        {{ delete_form|crispy }}
+      <button class="btn btn-danger ml-2" name="delete_template" onclick="return confirm('Are you sure? This will delete the selected template(s)')" type="submit">Delete</button> <!--to do: replace input with button-->
     </form>
 {% endblock %}

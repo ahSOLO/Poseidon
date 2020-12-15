@@ -4,10 +4,12 @@
 
 {% block content %}
 
-<h2>Upload a Template</h2>
+{% load crispy_forms_tags %}
+
+<h3>Upload a Template</h3>
 <form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form|crispy }}
     <button class="btn btn-success ml-2" name="upload_button" type="submit">Upload</button>
     <button class="btn btn-success ml-2" name="create_schema_button" type="submit">Upload and Create a Form</button>
 </form>

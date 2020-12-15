@@ -4,19 +4,21 @@
 
 {% block content %}
 
+{% load crispy_forms_tags %}
 {% load template_tags %}
+
 <form class="form-horizontal" method="POST" action="">
   {% csrf_token %}
   {{ formset.management_form }} {% for form, schema_entry in formset|zip:schema_entries  %} 
    {{ form.id }}
   <div class="row form-row spacer">
     <div class="col-2">
+        {{ schema_entry.description }}
       <label>{{form.key.label}}</label>
     </div>
     <div class="col-10">
       <div class="input-group">
         <table>
-        {{ schema_entry.description }}
         {% if schema_entry.entry_type == 'SHORT' %}
         {{ form.value_short }}
         {% endif %}
