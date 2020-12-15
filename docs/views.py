@@ -35,35 +35,56 @@ def upload_template(request):
 # Manage templates 
 def manage_templates(request):
     # Search for Template
-    if request.method == 'GET':
-        f = TemplateFilter(request.GET, queryset=Template.objects.filter(user=request.user)) #TO DO: add functionality to the filter list - either go to the template or have an option to delete it
-    # Delete Template
+    # if request.method == 'GET':
+    #     f = TemplateFilter(request.GET, queryset=Template.objects.filter(user=request.user)) #TO DO: add functionality to the filter list - either go to the template or have an option to delete it
     if request.method == 'POST':
-        choice_form = TemplateChoiceDelete(request.POST, user=request.user)
-        if choice_form.is_valid():
-            choice_form.cleaned_data['name'].delete()
-            return HttpResponseRedirect(reverse('docs:manage_templates'))
+        # Upload Template
+        if ('upload_button' or 'create_schema_button') in request.POST:
+            upload_form = TemplateForm(request.POST, request.FILES)
+            if upload_form.is_valid():
+                obj = upload_form.save(commit=False)
+                obj.user = request.user
+                obj.save()
+                if 'upload_button' in request.POST:
+                    return HttpResponseRedirect(reverse('docs:manage_templates'))
+                if 'create_schema_button' in request.POST:
+                    return HttpResponseRedirect(reverse('docs:create_schema', args=[obj.pk]))
+        else:
+            upload_form = TemplateForm()
+        # Delete Template
+        if 'delete_template' in request.POST:
+            delete_form = TemplateChoiceDelete(request.POST, user=request.user)
+            if delete_form.is_valid():
+                delete_form.cleaned_data['name'].delete()
+                return HttpResponseRedirect(reverse('docs:manage_templates'))
+        else:
+            delete_form = TemplateChoiceDelete(user=request.user)
     else:
-        choice_form = TemplateChoiceDelete(user=request.user)
-    return render(request, 'docs/manage_templates.html', {'filter': f, 'choice_form': choice_form})
+        upload_form = TemplateForm()
+        delete_form = TemplateChoiceDelete(user=request.user)
+    return render(request, 'docs/manage_templates.html', {'upload_form': upload_form, 'delete_form': delete_form})
 
 # Manage Schemas (Forms)
 def manage_schemas(request):
-    if request.method== 'GET': # TO DO: Allow user to filter by template
-        # selection_form = TemplateSelection(request.GET, user=request.user)
-        selection_form2 = TemplateSchemaSelection(request.GET, user=request.user)
-        selection_form3 = EntrySetSelection(request.GET, user=request.user)
+    if request.method== 'GET': 
         # Edit an existing schema
         if 'edit_schema' in request.GET:
+            selection_form2 = TemplateSchemaSelection(request.GET, user=request.user)
             if selection_form2.is_valid():
                 obj = selection_form2.cleaned_data.get('template_schema')
                 return HttpResponseRedirect(reverse('docs:edit_schema', args=[obj.pk]))
+        else:
+            selection_form2 = TemplateSchemaSelection(user=request.user)
         # Edit an existing entryset
         if 'edit_entryset' in request.GET:
+            # selection_form = TemplateSelection(request.GET, user=request.user) # TO DO: Allow user to filter by template
+            selection_form3 = EntrySetSelection(request.GET, user=request.user)
             if selection_form3.is_valid():
                 obj2 = selection_form3.cleaned_data.get('entryset')
                 schema = obj2.template_schema
                 return HttpResponseRedirect(reverse('docs:edit_entryset', args=[schema.pk, obj2.pk]))
+        else:
+            selection_form3 = EntrySetSelection(user=request.user)
     if request.method == 'POST':
         # Create a new schema and edit it
         if 'create_schema' in request.POST:
@@ -74,7 +95,7 @@ def manage_schemas(request):
                 obj3.save()
                 return HttpResponseRedirect(reverse('docs:edit_schema', args=[obj3.pk]))
         # Populate an existing schema
-        if 'pop_schema' in request.POST:
+        elif 'pop_schema' in request.POST:
             populate_form = TemplateSchemaSelection(request.POST, user=request.user)
             if populate_form.is_valid():
                 obj4 = populate_form.cleaned_data.get('template_schema')

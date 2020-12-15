@@ -6,7 +6,7 @@
 
 {% load crispy_forms_tags %}
 
-<h2>Upload a Template</h2>
+<h3>Upload a Template</h3>
 <form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form|crispy }}
