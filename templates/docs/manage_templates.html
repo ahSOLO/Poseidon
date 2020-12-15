@@ -4,19 +4,19 @@
 
 {% load crispy_forms_tags %}
 
-    <p> <b> Search </b> </p>
+    <h3>Search</h3>
     <form action="" method="get">
         {{ filter.form|crispy }}
-        <input type="submit" value="Search" />
+        <input class="btn btn-success ml-2" type="submit" value="Search" />
     </form>
     {% for obj in filter.qs %}
-        {{ obj.name }} | {{ obj.description }}<br />
+        {{ obj.name }} | {{ obj.description }} <br />
     {% endfor %}
     <br>
-    <p><b> Delete Templates </b></p>
+    <h3>Delete Templates</h3>
     <form action="" method="post">
         {% csrf_token %}
         {{ choice_form|crispy }}
-      <input type="submit" onclick="return confirm('Are you sure? This will delete the selected template(s)')" value="Delete">
+      <input class="btn btn-danger ml-2" type="submit" onclick="return confirm('Are you sure? This will delete the selected template(s)')" value="Delete">
     </form>
 {% endblock %}

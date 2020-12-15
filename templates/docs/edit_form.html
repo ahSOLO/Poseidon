@@ -4,18 +4,20 @@
 
 {% block content %}
 
+{% load crispy_forms_tags %}
+
+<h3>{{ template.name }}</h3>
+<h4>{{ schema.name }}</h4>
+
 <form class="form-horizontal" method="POST" action="">
   {% csrf_token %}
   {{ formset.management_form }} {% for form in formset %}
     {{ form.id }}
   <div class="row form-row spacer">
-    <div class="col-2">
-      <label>{{form.key.label}}</label>
-    </div>
-    <div class="col-10">
+    <div class="col-8">
       <div class="input-group">
         <table>
-        {{form.as_table}}
+        {{form|crispy}}
         </table>
         <div class="input-group-append">
           <button class="btn btn-success add-form-row">+</button>

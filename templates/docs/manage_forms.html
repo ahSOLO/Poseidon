@@ -6,28 +6,28 @@
 
 {% load crispy_forms_tags %}
 
-<h2>Create a form</h2>
+<h3>Create a form</h3>
 <form action="" method="post">
     {% csrf_token %}
     {{ creation_form|crispy }}
     <button class="btn btn-success ml-2" name="create_schema" type="submit">Create</button>
 </form>
 <br>
-<h2>Edit a form</h2>
+<h3>Edit a form</h3>
 <form action="" method="get">
     <!--{{ selection_form.as_p }}  To do: Add AJAX code to dynamically populate selection_form2 based on results selected in selection_form-->
     {{ selection_form2|crispy }}
     <button class="btn btn-success ml-2" name="edit_schema" type="submit">Select</button>
 </form>
 <br>
-<h2>Populate a form</h2>
+<h3>Populate a form</h3>
 <form action="" method="post">
     {% csrf_token %}
     {{ populate_form|crispy }}
     <button class="btn btn-success ml-2" name="pop_schema" type="submit">Populate</button>
 </form>
 <br>
-<h2>Edit past entries</h2>
+<h3>Edit past entries</h3>
 <form action="" method="get">
     {{ selection_form3|crispy }}
     <button class="btn btn-success ml-2" name="edit_entryset" type="submit">Edit</button>

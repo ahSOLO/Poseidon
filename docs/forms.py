@@ -8,8 +8,8 @@ from .constants import ENTRY_TYPES, SHORT, LONG, BOOL
 
 # Template upload form
 class TemplateForm(forms.ModelForm):
-  name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder': 'Please name your form'}))
-  description = forms.CharField(max_length=250, required=False, widget=forms.Textarea(attrs={'placeholder': 'Please describe the contents of your form'}))
+  name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder': 'Please name your template'}))
+  description = forms.CharField(max_length=250, required=False, widget=forms.Textarea(attrs={'placeholder': 'Please describe the contents of your template'}))
   docx_file = forms.FileField(label="Select a file", help_text="Max. 5 megabytes", validators=[file_size])
 
   class Meta:

@@ -45,7 +45,7 @@ def manage_templates(request):
             return HttpResponseRedirect(reverse('docs:manage_templates'))
     else:
         choice_form = TemplateChoiceDelete(user=request.user)
-    return render(request, 'docs/manage_templates.html', {'filter': f, 'choice_form': choice_form}) #TO DO: investigate error after deleting multiple files
+    return render(request, 'docs/manage_templates.html', {'filter': f, 'choice_form': choice_form})
 
 # Manage Schemas (Forms)
 def manage_schemas(request):
@@ -105,6 +105,7 @@ def create_schema(request, template_id):
 # Create Schema Entries / edit a Schema
 def edit_schema(request, schema_id):
     schema = TemplateSchema.objects.get(pk=schema_id)
+    template = Template.objects.get(templateschema__id=schema_id)
     # Authentication check
     if schema.user != request.user:
         return HttpResponse('You are not authorized to view this page.', status=401)
@@ -131,7 +132,7 @@ def edit_schema(request, schema_id):
                 return HttpResponseRedirect(reverse('docs:manage_schemas'))
             if "save_pop_button" in request.POST:
                 return HttpResponseRedirect(reverse('docs:pop_schema', args=[schema_id]))
-    return render(request, 'docs/edit_form.html', {'formset': formset})
+    return render(request, 'docs/edit_form.html', {'formset': formset, 'schema': schema, 'template': template})
 
 # Populate a schema and create documents
 def pop_schema(request, schema_id, entryset_id=""): # entryset_id is an optional parameter
