@@ -69,22 +69,22 @@ def manage_schemas(request):
     if request.method== 'GET': 
         # Edit an existing schema
         if 'edit_schema' in request.GET:
-            selection_form2 = TemplateSchemaSelection(request.GET, user=request.user)
-            if selection_form2.is_valid():
-                obj = selection_form2.cleaned_data.get('template_schema')
+            schema_selection = TemplateSchemaSelection(request.GET, user=request.user)
+            if schema_selection.is_valid():
+                obj = schema_selection.cleaned_data.get('template_schema')
                 return HttpResponseRedirect(reverse('docs:edit_schema', args=[obj.pk]))
         else:
-            selection_form2 = TemplateSchemaSelection(user=request.user)
+            schema_selection = TemplateSchemaSelection(user=request.user)
         # Edit an existing entryset
         if 'edit_entryset' in request.GET:
-            # selection_form = TemplateSelection(request.GET, user=request.user) # TO DO: Allow user to filter by template
-            selection_form3 = EntrySetSelection(request.GET, user=request.user)
-            if selection_form3.is_valid():
-                obj2 = selection_form3.cleaned_data.get('entryset')
+            template_selection = TemplateSelection(request.GET, user=request.user) # TO DO: Allow user to filter by template
+            entryset_selection = EntrySetSelection(request.GET, user=request.user)
+            if entryset_selection.is_valid():
+                obj2 = entryset_selection.cleaned_data.get('entryset')
                 schema = obj2.template_schema
                 return HttpResponseRedirect(reverse('docs:edit_entryset', args=[schema.pk, obj2.pk]))
         else:
-            selection_form3 = EntrySetSelection(user=request.user)
+            entryset_selection = EntrySetSelection(user=request.user)
     if request.method == 'POST':
         # Create a new schema and edit it
         if 'create_schema' in request.POST:
@@ -103,7 +103,7 @@ def manage_schemas(request):
     else:
         creation_form = TemplateSchemaForm(user=request.user)
         populate_form = TemplateSchemaSelection(user=request.user)
-    return render(request, 'docs/manage_forms.html', {'selection_form2': selection_form2, 'selection_form3': selection_form3, 'creation_form': creation_form, 'populate_form': populate_form}) # removed selection_form
+    return render(request, 'docs/manage_forms.html', {'schema_selection': schema_selection, 'template_selection': template_selection, 'entryset_selection': entryset_selection, 'creation_form': creation_form, 'populate_form': populate_form}) # removed selection_form
 
 # Create a Schema given a template id
 def create_schema(request, template_id):
