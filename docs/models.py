@@ -23,7 +23,7 @@ class Template(models.Model):
 
 class TemplateSchema(models.Model):
   # Relationships
-  template = models.ForeignKey("docs.Template", null=True, on_delete=models.SET_NULL)
+  template = models.ForeignKey("docs.Template", on_delete=models.CASCADE)
   user = models.ForeignKey("users.CustomUser", on_delete=models.CASCADE)
 
   # Fields

@@ -66,44 +66,54 @@ def manage_templates(request):
 
 # Manage Schemas (Forms)
 def manage_schemas(request):
+    schema_selection = TemplateSchemaSelection(user=request.user)
+    entryset_selection = EntrySetSelection(user=request.user)
+    creation_form = TemplateSchemaNameForm()
+
     if request.method== 'GET': 
-        # Edit an existing schema
-        if 'edit_schema' in request.GET:
-            schema_selection = TemplateSchemaSelection(request.GET, user=request.user)
-            if schema_selection.is_valid():
-                obj = schema_selection.cleaned_data.get('template_schema')
-                return HttpResponseRedirect(reverse('docs:edit_schema', args=[obj.pk]))
-        else:
-            schema_selection = TemplateSchemaSelection(user=request.user)
+        template_selection = TemplateSelection(request.GET, user=request.user)
         # Edit an existing entryset
         if 'edit_entryset' in request.GET:
-            template_selection = TemplateSelection(request.GET, user=request.user) # TO DO: Allow user to filter by template
             entryset_selection = EntrySetSelection(request.GET, user=request.user)
             if entryset_selection.is_valid():
                 obj2 = entryset_selection.cleaned_data.get('entryset')
                 schema = obj2.template_schema
                 return HttpResponseRedirect(reverse('docs:edit_entryset', args=[schema.pk, obj2.pk]))
-        else:
-            entryset_selection = EntrySetSelection(user=request.user)
+
     if request.method == 'POST':
+        template_selection = TemplateSelection(request.POST, user=request.user)
         # Create a new schema and edit it
         if 'create_schema' in request.POST:
-            creation_form = TemplateSchemaForm(request.POST, user=request.user)
-            if creation_form.is_valid():
+            creation_form = TemplateSchemaNameForm(request.POST)
+            if creation_form.is_valid() and template_selection.is_valid():
                 obj3 = creation_form.save(commit=False)
+                obj3.template = template_selection.cleaned_data.get('template')
                 obj3.user = request.user
                 obj3.save()
                 return HttpResponseRedirect(reverse('docs:edit_schema', args=[obj3.pk]))
+        # Edit an existing schema
+        if 'edit_schema' in request.POST:
+            schema_selection = TemplateSchemaSelection(request.POST, user=request.user)
+            if schema_selection.is_valid():
+                obj = schema_selection.cleaned_data.get('template_schema')
+                return HttpResponseRedirect(reverse('docs:edit_schema', args=[obj.pk]))
         # Populate an existing schema
         elif 'pop_schema' in request.POST:
-            populate_form = TemplateSchemaSelection(request.POST, user=request.user)
-            if populate_form.is_valid():
-                obj4 = populate_form.cleaned_data.get('template_schema')
+            schema_selection = TemplateSchemaSelection(request.POST, user=request.user)
+            if schema_selection.is_valid():
+                obj4 = schema_selection.cleaned_data.get('template_schema')
                 return HttpResponseRedirect(reverse('docs:pop_schema', args=[obj4.pk]))
-    else:
-        creation_form = TemplateSchemaForm(user=request.user)
-        populate_form = TemplateSchemaSelection(user=request.user)
-    return render(request, 'docs/manage_forms.html', {'schema_selection': schema_selection, 'template_selection': template_selection, 'entryset_selection': entryset_selection, 'creation_form': creation_form, 'populate_form': populate_form}) # removed selection_form
+    return render(request, 'docs/manage_forms.html', {'schema_selection': schema_selection, 'template_selection': template_selection, 'entryset_selection': entryset_selection, 'creation_form': creation_form})
+
+def load_schemas(request):
+    template_id = request.GET.get('template')
+    options = TemplateSchema.objects.filter(template=template_id).order_by('name')
+    return render(request, 'docs/dropdown_list_options.html', {'options': options})
+
+def load_entryset(request):
+    template_schema_id = request.GET.get('template_schema')
+    options = EntrySet.objects.filter(template_schema=template_schema_id)
+    return render(request, 'docs/dropdown_list_options.html', {'options': options})
 
 # Create a Schema given a template id
 def create_schema(request, template_id):
