@@ -16,7 +16,7 @@
 <h3>Edit a form</h3>
 <form action="" method="get">
     <!--{{ selection_form.as_p }}  To do: Add AJAX code to dynamically populate selection_form2 based on results selected in selection_form-->
-    {{ selection_form2|crispy }}
+    {{ schema_selection|crispy }}
     <button class="btn btn-success ml-2" name="edit_schema" type="submit">Select</button>
 </form>
 <br>
@@ -29,7 +29,7 @@
 <br>
 <h3>Edit past entries</h3>
 <form action="" method="get">
-    {{ selection_form3|crispy }}
+    {{ entryset_selection|crispy }}
     <button class="btn btn-success ml-2" name="edit_entryset" type="submit">Edit</button>
 </form>
 {% endblock content %}
