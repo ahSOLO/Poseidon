@@ -107,8 +107,13 @@ def manage_schemas(request):
 
 def load_schemas(request):
     template_id = request.GET.get('template')
-    schemas = TemplateSchema.objects.filter(template=template_id).order_by('name')
-    return render(request, 'docs/schema_dropdown_list_options.html', {'schemas': schemas})
+    options = TemplateSchema.objects.filter(template=template_id).order_by('name')
+    return render(request, 'docs/dropdown_list_options.html', {'options': options})
+
+def load_entryset(request):
+    template_schema_id = request.GET.get('template_schema')
+    options = EntrySet.objects.filter(template_schema=template_schema_id)
+    return render(request, 'docs/dropdown_list_options.html', {'options': options})
 
 # Create a Schema given a template id
 def create_schema(request, template_id):

@@ -6,13 +6,12 @@
 
 {% load crispy_forms_tags %}
 
-<!--To do: have all forms respond to a single template selection-->
 <div>
 <h3> Please select a Template </h3>
 <form action="" method="post">
 {{ template_selection|crispy }} 
 <br>
-<h4>Create a form</h3>
+<h4>Create a form</h4>
     {% csrf_token %}
     {{ creation_form|crispy }}
     <button class="btn btn-success ml-2" name="create_schema" type="submit">Create</button>
@@ -20,7 +19,7 @@
 </div>
 <br> 
 <div>
-<h4>Edit or Populate a form</h4>
+<h3>Please select a Form</h3>
 <form action="" method="post" id="select_schema_form" data-schemas-url="{% url 'docs:ajax-load-schemas' %}" novalidate>
     {% csrf_token %}
     {{ schema_selection|crispy }}
@@ -28,10 +27,10 @@
     <button class="btn btn-success ml-2" name="pop_schema" type="submit">Populate</button>
 </form>
 </div>
-<br> 
+<br>
 <div>
-<h4>Edit past entries</h4>
-<form action="" method="get">
+<h4>View past entries</h4>
+<form action="" method="get" id="select_entryset_form" data-entrysets-url="{% url 'docs:ajax-load-entrysets' %}" novalidate>
     {{ entryset_selection|crispy }}
     <button class="btn btn-success ml-2" name="edit_entryset" type="submit">Edit</button>
 </form>
@@ -42,9 +41,9 @@
     {{ block.super }}
     <script>
         $(window).on("pageshow", function(){
-            console.log("triggered");
             $("#id_template").val("").change();
             $("#id_template_schema").html('<option value="" selected="">---------</option>');
+            $("#id_entryset").html('<option value="" selected="">---------</option>');
         });
         $("#id_template").change(function() { // when the selected template changes...
             var url = $("#select_schema_form").attr("data-schemas-url"); // get the url of the `load_schemas` view
@@ -54,11 +53,27 @@
                 // initialize an AJAX request
                 url: url, // set the url of the request
                 data: {
-                template: templateId, // add the country id to the GET parameters
+                template: templateId, // add the template id to the GET parameters
                 },
                 success: function (data) {
                 // `data` is the return of the `load_schemas` view function
                 $("#id_template_schema").html(data); // replace the contents of the template schema input with the data that came from the server
+                },
+            });
+        });
+        $("#id_template_schema").change(function() { // when the selected template schema changes...
+            var url = $("#select_entryset_form").attr("data-entrysets-url"); // get the url of the `load_entryset` view
+            var templateSchemaId = $(this).val(); // get the selected template ID from the HTML input
+
+            $.ajax({
+                // initialize an AJAX request
+                url: url, // set the url of the request
+                data: {
+                template_schema: templateSchemaId, // add the template schema id to the GET parameters
+                },
+                success: function (data) {
+                // `data` is the return of the `load_entryset` view function
+                $("#id_entryset").html(data); // replace the contents of the template schema input with the data that came from the server
                 },
             });
         });

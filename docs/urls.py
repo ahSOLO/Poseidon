@@ -13,4 +13,5 @@ urlpatterns = [
     path('pop_form/<schema_id>/<entryset_id>', views.pop_schema, name='edit_entryset'),
     path('pop_form/<schema_id>/', views.pop_schema, name='pop_schema'),
     path('ajax/load-schemas/', views.load_schemas, name='ajax-load-schemas'),
+    path('ajax/load-entrysets/', views.load_entryset, name='ajax-load-entrysets'),
 ]
