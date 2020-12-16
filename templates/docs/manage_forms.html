@@ -6,30 +6,61 @@
 
 {% load crispy_forms_tags %}
 
-<h3>Create a form</h3>
+<!--To do: have all forms respond to a single template selection-->
+<div>
+<h3> Please select a Template </h3>
 <form action="" method="post">
+{{ template_selection|crispy }} 
+<br>
+<h4>Create a form</h3>
     {% csrf_token %}
     {{ creation_form|crispy }}
     <button class="btn btn-success ml-2" name="create_schema" type="submit">Create</button>
 </form>
-<br>
-<h3>Edit a form</h3>
-<form action="" method="get">
-    <!--{{ selection_form.as_p }}  To do: Add AJAX code to dynamically populate selection_form2 based on results selected in selection_form-->
-    {{ schema_selection|crispy }}
-    <button class="btn btn-success ml-2" name="edit_schema" type="submit">Select</button>
-</form>
-<br>
-<h3>Populate a form</h3>
-<form action="" method="post">
+</div>
+<br> 
+<div>
+<h4>Edit or Populate a form</h4>
+<form action="" method="post" id="select_schema_form" data-schemas-url="{% url 'docs:ajax-load-schemas' %}" novalidate>
     {% csrf_token %}
-    {{ populate_form|crispy }}
+    {{ schema_selection|crispy }}
+    <button class="btn btn-success ml-2" name="edit_schema" type="submit">Edit</button>
     <button class="btn btn-success ml-2" name="pop_schema" type="submit">Populate</button>
 </form>
-<br>
-<h3>Edit past entries</h3>
+</div>
+<br> 
+<div>
+<h4>Edit past entries</h4>
 <form action="" method="get">
     {{ entryset_selection|crispy }}
     <button class="btn btn-success ml-2" name="edit_entryset" type="submit">Edit</button>
 </form>
+</div>
 {% endblock content %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script>
+        $(window).on("pageshow", function(){
+            console.log("triggered");
+            $("#id_template").val("").change();
+            $("#id_template_schema").html('<option value="" selected="">---------</option>');
+        });
+        $("#id_template").change(function() { // when the selected template changes...
+            var url = $("#select_schema_form").attr("data-schemas-url"); // get the url of the `load_schemas` view
+            var templateId = $(this).val(); // get the selected template ID from the HTML input
+
+            $.ajax({
+                // initialize an AJAX request
+                url: url, // set the url of the request
+                data: {
+                template: templateId, // add the country id to the GET parameters
+                },
+                success: function (data) {
+                // `data` is the return of the `load_schemas` view function
+                $("#id_template_schema").html(data); // replace the contents of the template schema input with the data that came from the server
+                },
+            });
+        });
+    </script>
+{% endblock scripts %}
