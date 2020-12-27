@@ -27,19 +27,19 @@ class TemplateChoiceDelete(forms.Form):
       self.fields['name'].queryset = Template.objects.filter(user=user)
 
 # TemplateSchema form
-class TemplateSchemaForm(forms.ModelForm):
-  template = forms.ModelChoiceField(queryset=Template.objects.all())
-  name = forms.CharField(max_length=50)
+# class TemplateSchemaForm(forms.ModelForm):
+#   template = forms.ModelChoiceField(queryset=Template.objects.all())
+#   name = forms.CharField(max_length=50)
 
-  class Meta:
-    model = TemplateSchema
-    fields = ['template', 'name']
+#   class Meta:
+#     model = TemplateSchema
+#     fields = ['template', 'name']
 
-  # Limit results to Templates owned by the current user
-  def __init__(self, *args, **kwargs):
-      user = kwargs.pop('user')
-      super(TemplateSchemaForm, self).__init__(*args, **kwargs)
-      self.fields['template'].queryset = Template.objects.filter(user=user)
+#   # Limit results to Templates owned by the current user
+#   def __init__(self, *args, **kwargs):
+#       user = kwargs.pop('user')
+#       super(TemplateSchemaForm, self).__init__(*args, **kwargs)
+#       self.fields['template'].queryset = Template.objects.filter(user=user)
 
 # TemplateSchema name form
 class TemplateSchemaNameForm(forms.ModelForm):
@@ -83,8 +83,8 @@ class TemplateSchemaEntryForm(forms.ModelForm):
   # Limit results to TemplateSchema owned by the current user
   def __init__(self, *args, **kwargs):
       user = kwargs.pop('user')
-      super(TemplateSchemaForm, self).__init__(*args, **kwargs)
-      self.fields['template_schema'].queryset = TemplateSchema.objects.filter(user=user)
+      super(TemplateSchemaEntryForm, self).__init__(*args, **kwargs)
+      self.fields['template_schema'].queryset = TemplateSchemaEntry.objects.filter(user=user)
 
 # TemplateSchemaEntry formset
 TemplateSchemaEntryFormset = forms.modelformset_factory(
@@ -129,13 +129,13 @@ EntryFormset = forms.modelformset_factory(
 # FILTERS
 
 # Template filter for deletion screen.
-class TemplateFilter(django_filters.FilterSet):
-  name = django_filters.CharFilter(lookup_expr='icontains')
-  description = django_filters.CharFilter(lookup_expr='icontains')
+# class TemplateFilter(django_filters.FilterSet):
+#   name = django_filters.CharFilter(lookup_expr='icontains')
+#   description = django_filters.CharFilter(lookup_expr='icontains')
 
-  class Meta:
-    model = Template
-    fields = ['name', 'description']
+#   class Meta:
+#     model = Template
+#     fields = ['name', 'description']
 
   # Alternative Code: Limit filter results to templates owned by the current user.
   # @property

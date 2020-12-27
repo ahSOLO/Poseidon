@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.core.validators import FileExtensionValidator
 
@@ -28,6 +30,7 @@ class TemplateSchema(models.Model):
 
   # Fields
   name = models.CharField(max_length=50)
+  uuid = models.UUIDField(default=uuid.uuid4, editable=False)
   created = models.DateTimeField(auto_now_add=True, editable=False)
   last_updated = models.DateTimeField(auto_now=True, editable=False)
 
@@ -60,7 +63,7 @@ class TemplateSchemaEntry(models.Model):
 class EntrySet(models.Model):
   # Relationships
   template_schema = models.ForeignKey("docs.TemplateSchema", on_delete=models.CASCADE)
-  user = models.ForeignKey("users.CustomUser", on_delete=models.CASCADE)
+  user = models.ForeignKey("users.CustomUser", on_delete=models.CASCADE, null=True) # Set null = True to handle non-users populating form;
 
   # Fields
   created = models.DateTimeField(auto_now_add=True, editable=False)

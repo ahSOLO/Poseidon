@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Get Shareable Link{% endblock title %}
+
+{% block content %}
+
+<p> Your unique link is: {{schema.uuid}} </p>
+
+<br>
+
+<h3> Generate a new shareable link </h3>
+<p> Warning: This will replace the current shareable link associated with your form with the newly generated link. The current link will no longer be valid. </p>
+
+<form action="" method="post">
+  {% csrf_token %}
+  <button class="btn btn-danger ml-2" onclick="return confirm('Are you sure? This will REPLACE your current shareable link with the newly generated link!')" type="submit">Generate New Link</button>
+</form>
+
+
+
+{% endblock content %}
