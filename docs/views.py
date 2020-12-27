@@ -3,10 +3,11 @@ from django.views.generic import TemplateView
 from django.http import FileResponse, HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 
+import uuid
 from io import BytesIO
 from docxtpl import DocxTemplate
 
-from .forms import TemplateForm, TemplateFilter, TemplateChoiceDelete, TemplateSchemaForm, TemplateSchemaNameForm, TemplateSelection, TemplateSchemaSelection, TemplateSchemaEntryFormset, EntryFormset, EntrySetSelection
+from .forms import TemplateForm, TemplateChoiceDelete, TemplateSchemaNameForm, TemplateSelection, TemplateSchemaSelection, TemplateSchemaEntryFormset, EntryFormset, EntrySetSelection
 from .models import Template, TemplateSchema, TemplateSchemaEntry, EntrySet, Entry
 
 # Create your views here.
@@ -69,6 +70,7 @@ def manage_schemas(request):
     schema_selection = TemplateSchemaSelection(user=request.user)
     entryset_selection = EntrySetSelection(user=request.user)
     creation_form = TemplateSchemaNameForm()
+    template_selection = None
 
     if request.method== 'GET': 
         template_selection = TemplateSelection(request.GET, user=request.user)
@@ -103,6 +105,11 @@ def manage_schemas(request):
             if schema_selection.is_valid():
                 obj4 = schema_selection.cleaned_data.get('template_schema')
                 return HttpResponseRedirect(reverse('docs:pop_schema', args=[obj4.pk]))
+        elif 'get_schema_link' in request.POST:
+            schema_selection = TemplateSchemaSelection(request.POST, user=request.user)
+            if schema_selection.is_valid():
+                obj4 = schema_selection.cleaned_data.get('template_schema')
+                return HttpResponseRedirect(reverse('docs:schema_link', args=[obj4.pk]))
     return render(request, 'docs/manage_forms.html', {'schema_selection': schema_selection, 'template_selection': template_selection, 'entryset_selection': entryset_selection, 'creation_form': creation_form})
 
 def load_schemas(request):
@@ -137,6 +144,7 @@ def create_schema(request, template_id):
 def edit_schema(request, schema_id):
     schema = TemplateSchema.objects.get(pk=schema_id)
     template = Template.objects.get(templateschema__id=schema_id)
+    formset = None
     # Authentication check
     if schema.user != request.user:
         return HttpResponse('You are not authorized to view this page.', status=401)
@@ -169,6 +177,7 @@ def edit_schema(request, schema_id):
 def pop_schema(request, schema_id, entryset_id=""): # entryset_id is an optional parameter
     # To do: Show the name and description of the template that is being used to populate the form
     schema = TemplateSchema.objects.get(pk=schema_id) # get schema object from ID
+    formset = None
     # Authentication check
     if schema.user != request.user:
         return HttpResponse('You are not authorized to view this page.', status=401)
@@ -220,3 +229,55 @@ def pop_schema(request, schema_id, entryset_id=""): # entryset_id is an optional
                 byte_io.seek(0) #go to the beginning of a file-like object
                 return FileResponse(byte_io, as_attachment=True, filename=f'generated.docx') #TO DO: Option to name the file
     return render(request, 'docs/pop_form.html', {'formset':formset, 'schema_entries': schema_entries})
+
+
+    # Anonymously populate a schema and create documents using a schema uuid link
+def anon_pop_schema(request, schema_uuid):
+    # To do: Show the name and description of the template that is being used to populate the form
+    schema = TemplateSchema.objects.get(uuid=schema_uuid) # get schema object from ID
+    formset = None
+    schema_entries = TemplateSchemaEntry.objects.filter(template_schema__uuid=schema_uuid) #get list of schema entries from schema id
+    # entryset = EntrySet.objects.create(template_schema=schema, user=request.user)
+    # Display entryset's already existing values (if any) on the formset
+    if request.method == 'GET':
+        formset = EntryFormset()
+    if request.method == 'POST':
+        formset = EntryFormset(request.POST)
+        if formset.is_valid():
+            # Create Document button pressed: 
+            if 'create_doc' in request.POST:
+                # create a dictionary object with keys from schema entries and values from entryset entries
+                dic = {}
+                for form, schema_entry in zip(formset, schema_entries):
+                    value_short = form.cleaned_data.get('value_short')
+                    value_long = form.cleaned_data.get('value_long')
+                    value_bool = form.cleaned_data.get('value_bool')
+                    if value_short:
+                        value = value_short
+                    elif value_long:
+                        value = value_long
+                    elif value_bool:
+                        value = value_bool
+                    else: 
+                        continue
+                    dic[schema_entry.key] = value
+                # Render the docx file using the created dictionary
+                tpl = DocxTemplate(Template.objects.get(templateschema = schema).docx_file)
+                byte_io = BytesIO() #create a file-like object
+                tpl.render(dic)
+                tpl.save(byte_io) #save data to a file-like object
+                byte_io.seek(0) #go to the beginning of a file-like object
+                return FileResponse(byte_io, as_attachment=True, filename=f'generated.docx') #TO DO: Option to name the file
+    return render(request, 'docs/anon_pop_form.html', {'formset':formset, 'schema_entries': schema_entries})
+
+def schema_link(request, schema_id):
+    schema = TemplateSchema.objects.get(pk=schema_id) # get schema object from ID
+    # Authentication check
+    if schema.user != request.user:
+        return HttpResponse('You are not authorized to view this page.', status=401)
+    # Generate a new uuid and refresh the page
+    if request.method == 'POST':
+        schema.uuid = uuid.uuid4()
+        schema.save()
+        return HttpResponseRedirect(reverse('docs:schema_link', args=[schema_id])) 
+    return render(request, 'docs/form_link.html', {'schema':schema})

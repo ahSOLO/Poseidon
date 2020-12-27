@@ -11,6 +11,7 @@ class TemplateAdmin(admin.ModelAdmin):
   
 class TemplateSchemaAdmin(admin.ModelAdmin):
   model = TemplateSchema
+  list_display = ['name', 'uuid']
   inlines = [TemplateSchemaEntryAdmin]
 
 class EntryAdmin(admin.StackedInline):
