@@ -51,17 +51,24 @@
             <nav class="order-2 col-md-2 order-md-1 d-md-block bg-light">
                 <div class="sticky-top mt-4">
                     <ul class="nav flex-column">
+                        {% url 'docs:home' as home_url %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'docs:home' %}"><b>Learning Center</b></a>
+                            <a {% if request.get_full_path == home_url %} class="nav-link disabled" {% else %} class="nav-link" {% endif %} href="{% url 'docs:home' %}"><b>Front Page</b></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'docs:upload' %}"><b>Create a Template</b></a>
+                            <a class="nav-link" href="{% url 'docs:home' %}"><b>Get Started</b></a>
                         </li>
+                        {% url 'docs:upload' as upload_url %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'docs:manage_templates' %}"><b>Manage my Templates</b></a>
+                            <a {% if request.get_full_path == upload_url %} class="nav-link disabled" {% else %} class="nav-link" {% endif %} href="{% url 'docs:upload' %}"><b>Create a Template</b></a>
                         </li>
+                        {% url 'docs:manage_templates' as mgtemp_url %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'docs:manage_schemas' %}"><b>Manage my Forms</b></a>
+                            <a {% if request.get_full_path == mgtemp_url %} class="nav-link disabled" {% else %} class="nav-link" {% endif %} href="{% url 'docs:manage_templates' %}"><b>Manage my Templates</b></a>
+                        </li>
+                        {% url 'docs:manage_schemas' as mgschem_url %}
+                        <li class="nav-item">
+                            <a {% if request.get_full_path == mgschem_url %} class="nav-link disabled" {% else %} class="nav-link" {% endif %} href="{% url 'docs:manage_schemas' %}"><b>Manage my Forms</b></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'docs:home' %}"><b>Help</b></a>
