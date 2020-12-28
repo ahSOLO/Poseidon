@@ -70,7 +70,7 @@ class EntrySet(models.Model):
   last_updated = models.DateTimeField(auto_now=True, editable=False)
 
   def __str__(self):
-    return "for " + str(self.template_schema) + ", created by " + str(self.user) + ", last updated: " + str(self.last_updated)
+    return "for " + str(self.template_schema) + ", created: " + self.created.strftime("%m/%d/%Y, %H:%M:%S %Z")
 
 class Entry(models.Model):
   # Relationships
