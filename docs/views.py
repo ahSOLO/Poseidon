@@ -2,19 +2,42 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.http import FileResponse, HttpResponseRedirect, HttpResponse
 from django.urls import reverse
+from django.core.mail import send_mail, BadHeaderError
 
 import uuid
 from io import BytesIO
 from docxtpl import DocxTemplate
 
-from .forms import TemplateForm, TemplateChoiceDelete, TemplateSchemaNameForm, TemplateSelection, TemplateSchemaSelection, TemplateSchemaEntryFormset, EntryFormset, EntrySetSelection
+from .forms import ContactForm, TemplateForm, TemplateChoiceDelete, TemplateSchemaNameForm, TemplateSelection, TemplateSchemaSelection, TemplateSchemaEntryFormset, EntryFormset, EntrySetSelection
 from .models import Template, TemplateSchema, TemplateSchemaEntry, EntrySet, Entry
 
 # Create your views here.
 
 # Home Page
 class HomePageView(TemplateView):
-  template_name = 'home.html'
+    template_name = 'home.html'
+
+# Getting Started Page
+class GetStartedView(TemplateView):
+    template_name = 'get_started.html'
+
+# Help Page
+def help_view(request):
+    if request.method == 'GET':
+        form = ContactForm()
+    else:
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            reply_to = form.cleaned_data['reply_to']
+            try:
+                send_mail(subject, message + " \nREPLY EMAIL: " + reply_to, ['poseidondocshelp@gmail.com'], ['poseidondocuments@gmail.com'])
+            except BadHeaderError:
+                return HttpResponse('Invalid header found.')
+            return HttpResponseRedirect(reverse('docs:home'))
+    return render(request, "help.html", {'form': form})
+
 
 # Upload Template - receives docx file
 def upload_template(request):

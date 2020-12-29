@@ -126,6 +126,12 @@ EntryFormset = forms.modelformset_factory(
   extra=200 # TO DO: find a more efficient way of having a dynamic formset size
 )
 
+# Contact Form
+class ContactForm(forms.Form):
+    subject = forms.CharField(required=True)
+    message = forms.CharField(widget=forms.Textarea, required=True)
+    reply_to = forms.EmailField(required=True)
+
 # FILTERS
 
 # Template filter for deletion screen.

@@ -8,12 +8,25 @@
     <p class="lead">Collaborative document automation made simple.</p>
     </p>
 </div>
+<p><b> Welcome to Poseidon</b>, a free document automation service. </p>
+<p>Create your own document templates and pair them with forms that can be shared with anyone across the world.</p>
 {% if user.is_authenticated %}
+    <span>To begin automating documents of any type, </span> <b><a href="{% url 'docs:get_started' %}">get started here.</b></a>
+{% else %}
+    <span>To begin automating documents of any type, first </span> <b><a href="{% url 'signup' %}">create an account.</b></a>
+{% endif %}
+
+<br>
+<br>
+<br>
+
+<!-- {% if user.is_authenticated %}
     Hello {{ user.username }}!
-    <p><a href="{%url 'logout' %}">Log Out</a></p>
+    <p><a href="{% url 'logout' %}">Log Out</a></p>
 {% else %}
     <p>You are not logged in</p>
     <a href="{% url 'login' %}">Log In</a> |
     <a href="{% url 'signup' %}">Sign Up</a>
-{% endif %}
+{% endif %} -->
+
 {% endblock content %}

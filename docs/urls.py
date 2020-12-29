@@ -5,6 +5,8 @@ from . import views
 app_name = 'docs'
 urlpatterns = [
     path('', views.HomePageView.as_view(), name='home'),
+    path('get_started/', views.GetStartedView.as_view(), name='get_started'),
+    path('help/', views.help_view, name='help'),
     path('upload/', views.upload_template, name='upload'),
     path('manage_templates/', views.manage_templates, name='manage_templates'),
     path('manage_forms/', views.manage_schemas, name='manage_schemas'),
