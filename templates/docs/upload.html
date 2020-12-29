@@ -6,6 +6,47 @@
 
 {% load crispy_forms_tags %}
 
+<h3>Template Creation Guide</h3>
+<br>
+<h5>Choosing a word processor</h5>
+<p>Poseidon's templates are created using any word processing program that can save files in the .DOCX format. Among others, these include: </p>
+<ul> 
+    <li> Microsoft Word, </li>
+    <li> Google Docs, </li>
+    <li> Apache OpenOffice, and </li> 
+    <li> LibreOffice Writer.</li>
+</ul>
+
+{% verbatim  %}
+<h5>Drafting the template</h5>
+<ol>
+    <li><b>Identify the Variables:</b> It is useful to start with a copy of the type of document you wish to automate. Take note of all the information inside the document that needs to be modified each time it is drafted. 
+    These are the <i>variables</i>.</li><br>
+    <li><b>Tag the Variables:</b> Replace each of the variables inside your document with the following tag: {{ variable_name }}, where "variable_name" is replaced by a unique name to be given to that variable. 
+    For example, "Gunther lives in Canada" can be replaced with "{{ first_name }} lives in {{ country }}". Variable names should not contain spaces or special symbols, with the exception of underscores. 
+    Please also leave a space between the variable name and the curly brackets. </li><br>
+    <li><b>Upload the Template:</b> Once the variables have been tagged, remove any remaining text that you do not with to reproduce on the final document. 
+    If you wish to include special rules or dynamic lists to your template, consult the "Advanced Tags" section below. Otherwise, the template is ready to be uploaded to Poseidon--an upload form is provided at the bottom of this page.
+</ol>
+
+<h5>Advanced Tags</h5>
+<p> Poseidon's tagging system also allows for more advanced use cases. Here are some examples:
+<ul>
+    <li><b> Conditional Variables:</b> When drafting the template, you may create <i>conditional variables</i>. 
+    Conditional variables allow you to make certain additions to your document <em>if</em> a certain variable is marked as true. For example, consider the following snippet: <br><br>
+    <h6> {% if condition %} The condition is true {% endif %}. </h6> <br>
+    Here, a conditional variable called "condition" was created. The type of value that can be assigned to a variable is determined when creating the form. A conditional variable can only take on the value of "True" or "False".
+    If this variable is marked as "True" when the form is being populated, the phrase "The condition is true" will be added to the final document. </li><br>
+    <li><b>Lists:</b> Poseidon also allows for the creation of dynamic lists. When drafting the template, you may use the following language to create a list: <br><br>
+    <h6> {% set myList = [list_1, list_2, list_3, list_4, list_5] %} {% for item in myList %} {% if item %}<br>
+    1.	{{ item }} {% endif %} {% endfor %} </h6><br>
+    This will create a list of up to five entries long. Note that "1.  " represents the beginning of a list that is recognized by the word processing program. 
+    list_1 through to list_5 are variables that should be included in the form. Once set up, this will give the person populating the form the ability to enter up to 5 entries on the list, 
+    and the final document will dynamically adjust the size of the list based on the number of entries that have been filled out on the form. 
+</ul>
+<p> Poseidon's tagging system is built on the open source library python-docx-template. For more information about the syntax used, please consult <a href="https://docxtpl.readthedocs.io/en/latest/">the following resource</a>.
+{% endverbatim  %}
+
 <h3>Upload a Template</h3>
 <form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
