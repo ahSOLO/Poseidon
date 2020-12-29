@@ -91,8 +91,8 @@ TemplateSchemaEntryFormset = forms.modelformset_factory(
   TemplateSchemaEntry,
   fields=('key', 'description', 'entry_type'),
   widgets={'key': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Variable Name'}),
-  'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe the Variable', 'style': 'height: 5em;'})
-  }
+  'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe your variable in the form of a prompt', 'style': 'height: 5em;'})
+  },
 )
 
 # EntrySet selection form

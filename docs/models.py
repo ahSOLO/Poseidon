@@ -53,12 +53,12 @@ class TemplateSchemaEntry(models.Model):
     return self.key
   
   class Meta:
-      constraints = [
-          models.UniqueConstraint(
-              fields=['template_schema', 'key'], 
-              name='unique key'
-          )
-      ]
+    constraints = [
+        models.UniqueConstraint(
+            fields=['template_schema', 'key'], 
+            name='unique key'
+        )
+    ]
 
 class EntrySet(models.Model):
   # Relationships
