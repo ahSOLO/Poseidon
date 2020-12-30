@@ -4,8 +4,12 @@
 
 {% block content %}
 
-<p> Your unique link is: {{schema.uuid}} </p>
+<h3> Your shareable link </h3>
+<p> Your unique link for form {{schema}} is:</p>
+<p id="shareable_link">{% url 'docs:anon_pop_schema' schema_uuid=schema.uuid %}<br><br></p>
+<button class="btn btn-success ml-2" id="copy_shareable_link" type="button">Copy to Clipboard</button>
 
+<br>
 <br>
 
 <h3> Generate a new shareable link </h3>
@@ -16,6 +20,24 @@
   <button class="btn btn-danger ml-2" onclick="return confirm('Are you sure? This will REPLACE your current shareable link with the newly generated link!')" type="submit">Generate New Link</button>
 </form>
 
-
-
 {% endblock content %}
+
+{% block scripts %}
+{{ block.super }}
+  <script>
+  document.getElementById("copy_shareable_link").addEventListener("click", copy_shareable_link);
+
+  function copy_shareable_link() {
+      let copyText = document.getElementById("shareable_link");
+      let textArea = document.createElement("textarea");
+      let successText = document.createElement("h6");
+      textArea.value = copyText.textContent;
+      successText.innerText = "Successfully Copied!";
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("Copy");
+      textArea.remove();
+      copyText.appendChild(successText);
+  }
+  </script>
+{% endblock scripts%}

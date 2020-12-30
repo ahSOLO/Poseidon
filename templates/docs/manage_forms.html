@@ -11,7 +11,7 @@
 <form action="" method="post">
 {{ template_selection|crispy }} 
 <br>
-<h4>Create a form</h4>
+<h5>Create a form for the selected template</h5>
     {% csrf_token %}
     {{ creation_form|crispy }}
     <button class="btn btn-success ml-2" name="create_schema" type="submit">Create</button>
@@ -19,7 +19,7 @@
 </div>
 <br> 
 <div>
-<h3>Please select a Form</h3>
+<h5>Manage an existing form</h5>
 <form action="" method="post" id="select_schema_form" data-schemas-url="{% url 'docs:ajax-load-schemas' %}" novalidate>
     {% csrf_token %}
     {{ schema_selection|crispy }}
@@ -30,7 +30,7 @@
 </div>
 <br>
 <div>
-<h4>View past entries</h4>
+<h5>Manage past entries</h5>
 <form action="" method="get" id="select_entryset_form" data-entrysets-url="{% url 'docs:ajax-load-entrysets' %}" novalidate>
     {{ entryset_selection|crispy }}
     <button class="btn btn-success ml-2" name="edit_entryset" type="submit">Edit</button>
@@ -43,8 +43,8 @@
     <script>
         $(window).on("pageshow", function(){
             $("#id_template").val("").change();
-            $("#id_template_schema").html('<option value="" selected="">---------</option>');
-            $("#id_entryset").html('<option value="" selected="">---------</option>');
+            $("#id_template_schema").html('<option value="" selected="">Select a template first</option>');
+            $("#id_entryset").html('<option value="" selected="">Select a form first</option>');
         });
         $("#id_template").change(function() { // when the selected template changes...
             var url = $("#select_schema_form").attr("data-schemas-url"); // get the url of the `load_schemas` view
