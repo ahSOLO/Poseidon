@@ -7,8 +7,12 @@
 {% load crispy_forms_tags %}
 
 <h3> Form Creation Guide </h3>
+{% verbatim  %}
 <p> Take note of each of the variable names in your template. Please input each of these names 
-(without the curly brackets) into one of the "Key" fields below. You can generate more fields by clicking the green + button on the right side. </p>
+(without the curly brackets) into separate "Key" fields in the form below. You can generate more fields by clicking the green + button on the right side.</p>
+<p>For example, if your document contains the text: <b>"{{ first_name }} {{ last_name }} resides at {{ address }}"</b>, you should click the green + button twice to create a total of three
+entries and then enter <b>first_name</b>, <b>last_name</b>, and <b>address</b> within the "Key" field of each entry.</p>
+{% endverbatim  %}
 <p> Next to the "Key" field is the "Description" field. Here, you can describe your variable in the form of a prompt. <br> For example, <b>first_name</b> would have a prompt of: <b>What is your first name?</b> </p>
 <p> Finally, the "Entry type" field determines the size of the text box that your form will present for each variable. If your variable is a short phrase or sentence, use the "Short" entry type. 
 For longer paragraphs, use the "Long" entry type. The final entry type "True/False" is meant to be used with conditional variables (see the Advanced Tags section of the <a href="{% url 'docs:upload' %}">Template Creation Guide</a>).

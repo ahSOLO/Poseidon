@@ -3,6 +3,7 @@ from django.views.generic import TemplateView
 from django.http import FileResponse, HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.core.mail import send_mail, BadHeaderError
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 import uuid
 from io import BytesIO
@@ -18,8 +19,9 @@ class HomePageView(TemplateView):
     template_name = 'home.html'
 
 # Getting Started Page
-class GetStartedView(TemplateView):
+class GetStartedView(LoginRequiredMixin, TemplateView):
     template_name = 'get_started.html'
+    login_url='login'
 
 # Help Page
 def help_view(request):
@@ -148,7 +150,7 @@ def load_entryset(request):
 # Create a Schema given a template id
 def create_schema(request, template_id):
     template = Template.objects.get(pk=template_id)
-    # Authentication check
+    # Authorization check
     if template.user != request.user:
         return HttpResponse('You are not authorized to view this page.', status=401)
     if request.method == 'POST':
@@ -168,7 +170,7 @@ def edit_schema(request, schema_id):
     schema = TemplateSchema.objects.get(pk=schema_id)
     template = Template.objects.get(templateschema__id=schema_id)
     formset = None
-    # Authentication check
+    # Authorization check
     if schema.user != request.user:
         return HttpResponse('You are not authorized to view this page.', status=401)
     # Upon GET request, show existing schema entries
@@ -201,7 +203,7 @@ def pop_schema(request, schema_id, entryset_id=""): # entryset_id is an optional
     # To do: Show the name and description of the template that is being used to populate the form
     schema = TemplateSchema.objects.get(pk=schema_id) # get schema object from ID
     formset = None
-    # Authentication check
+    # Authorization check
     if schema.user != request.user:
         return HttpResponse('You are not authorized to view this page.', status=401)
     schema_entries = TemplateSchemaEntry.objects.filter(template_schema=schema_id) #get list of schema entries from schema id
@@ -295,7 +297,7 @@ def anon_pop_schema(request, schema_uuid):
 
 def schema_link(request, schema_id):
     schema = TemplateSchema.objects.get(pk=schema_id) # get schema object from ID
-    # Authentication check
+    # Authorization check
     if schema.user != request.user:
         return HttpResponse('You are not authorized to view this page.', status=401)
     # Generate a new uuid and refresh the page
