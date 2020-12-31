@@ -31,5 +31,6 @@ six==1.15.0
 sqlparse==0.4.1
 starkbank-ecdsa==1.1.0
 toml==0.10.2
+whitenoise==5.2.0
 wincertstore==0.2
 wrapt==1.12.1
