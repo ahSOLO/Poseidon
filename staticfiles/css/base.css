@@ -1,0 +1,41 @@
+
+#template_graphic {
+  display: flex;
+  width: 360px;
+  height: 360px;
+  background-color: lightblue;
+}
+
+#form_graphic {
+  display: flex;
+  width: 360px;
+  height: 360px;
+  background-color: lightcyan;  
+}
+
+#output_graphic {
+  display: flex;
+  width: 360px;
+  height: 360px;
+  background-color: lightsteelblue;
+}
+
+.graphic_border {
+  justify-content: center;
+  margin: auto;
+  border-style: solid;
+  width: 250px;
+  height: 250px;
+}
+
+.gs_titles{
+  top: -50px;
+  display: block;
+  width: 300px;
+  position: relative;
+}
+
+.gs_text{
+  margin: -20px 10px 10px 10px;
+  display: block;
+}
