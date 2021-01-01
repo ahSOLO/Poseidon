@@ -15,18 +15,9 @@
 {% else %}
     <span>To begin automating documents of any type, first <b><a href="{% url 'signup' %}">create an account</b></a> or <b><a href="{% url 'login' %}">log in</a></b>.</span>
 {% endif %}
-
 <br>
 <br>
+<p> For an example of Poseidon in action, click <b><a href='http://poseidondocs.herokuapp.com/anon_pop_form/c0cdbfe8-4895-4c75-b836-04e3f4ae2669/'>here</a></b>.
 <br>
-
-<!-- {% if user.is_authenticated %}
-    Hello {{ user.username }}!
-    <p><a href="{% url 'logout' %}">Log Out</a></p>
-{% else %}
-    <p>You are not logged in</p>
-    <a href="{% url 'login' %}">Log In</a> |
-    <a href="{% url 'signup' %}">Sign Up</a>
-{% endif %} -->
 
 {% endblock content %}
