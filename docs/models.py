@@ -44,7 +44,7 @@ class TemplateSchemaEntry(models.Model):
   # Fields
   order = models.PositiveSmallIntegerField()
   key = models.CharField(max_length=50)
-  description = models.TextField(max_length=250)
+  description = models.TextField(max_length=500)
   entry_type = models.CharField(max_length=10, choices=ENTRY_TYPES, default=SHORT,)
   created = models.DateTimeField(auto_now_add=True, editable=False)
   last_updated = models.DateTimeField(auto_now=True, editable=False)

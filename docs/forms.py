@@ -9,7 +9,7 @@ from .constants import ENTRY_TYPES, SHORT, LONG, BOOL
 # Template upload form
 class TemplateForm(forms.ModelForm):
   name = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder': 'Please name your template'}))
-  docx_file = forms.FileField(label="Select a file", help_text="Max. 5 megabytes", validators=[file_size])
+  docx_file = forms.FileField(label="Select your DOCX file", help_text="Max. 5 megabytes", validators=[file_size])
 
   class Meta:
     model = Template
@@ -43,7 +43,7 @@ class TemplateChoiceDelete(forms.Form):
 # TemplateSchema name form
 class TemplateSchemaNameForm(forms.ModelForm):
   name = forms.CharField(max_length=50)
-  description = forms.CharField(max_length=250, required=False, widget=forms.Textarea(attrs={'placeholder': '(Optional) Provide a description of your form to be shown when it is being filled', 'style': 'height: 5em;'}))
+  description = forms.CharField(max_length=500, required=False, widget=forms.Textarea(attrs={'placeholder': '(Optional) Provide a description of your form to be shown when it is being filled', 'style': 'height: 5em;'}))
 
   class Meta:
     model = TemplateSchema
