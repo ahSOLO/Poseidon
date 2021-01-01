@@ -48,9 +48,9 @@ INSTALLED_APPS = [
 
     # 3rd Party
     'crispy_forms',
-    'django_cleanup.apps.CleanupConfig', #should be placed last in installed apps - see documentation
     'django_filters',
     'storages',
+    'django_cleanup.apps.CleanupConfig', #should be placed last in installed apps - see documentation
 ]
 
 MIDDLEWARE = [
@@ -61,7 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'Poseidon.urls'
@@ -160,7 +160,7 @@ AWS_LOCATION = 'static'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 
-DEFAULT_FILE_STORAGE = 'mysite.storage_backends.MediaStorage'  # <-- here is where we reference it
+DEFAULT_FILE_STORAGE = 'Poseidon.storage_backends.MediaStorage' 
 
 # Custom User Model
 
