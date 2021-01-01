@@ -256,7 +256,7 @@ def pop_schema(request, schema_id, entryset_id=""): # entryset_id is an optional
     return render(request, 'docs/pop_form.html', {'formset':formset, 'schema_entries': schema_entries})
 
 
-    # Anonymously populate a schema and create documents using a schema uuid link
+# Anonymously populate a schema and create documents using a schema uuid link
 def anon_pop_schema(request, schema_uuid):
     # To do: Show the name and description of the template that is being used to populate the form
     schema = TemplateSchema.objects.get(uuid=schema_uuid) # get schema object from ID
@@ -265,7 +265,7 @@ def anon_pop_schema(request, schema_uuid):
     # entryset = EntrySet.objects.create(template_schema=schema, user=request.user)
     # Display entryset's already existing values (if any) on the formset
     if request.method == 'GET':
-        formset = EntryFormset()
+        formset = EntryFormset(queryset=Entry.objects.none())
     if request.method == 'POST':
         formset = EntryFormset(request.POST)
         if formset.is_valid():
