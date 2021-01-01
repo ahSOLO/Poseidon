@@ -65,7 +65,7 @@ def manage_templates(request):
     #     f = TemplateFilter(request.GET, queryset=Template.objects.filter(user=request.user)) #TO DO: add functionality to the filter list - either go to the template or have an option to delete it
     if request.method == 'POST':
         # Upload Template
-        if ('upload_button' or 'create_schema_button') in request.POST:
+        if 'upload_button' or 'create_schema_button' in request.POST:
             upload_form = TemplateForm(request.POST, request.FILES)
             if upload_form.is_valid():
                 obj = upload_form.save(commit=False)
