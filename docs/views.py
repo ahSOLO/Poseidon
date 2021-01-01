@@ -253,7 +253,7 @@ def pop_schema(request, schema_id, entryset_id=""): # entryset_id is an optional
                 tpl.save(byte_io) #save data to a file-like object
                 byte_io.seek(0) #go to the beginning of a file-like object
                 return FileResponse(byte_io, as_attachment=True, filename=f'generated.docx') #TO DO: Option to name the file
-    return render(request, 'docs/pop_form.html', {'formset':formset, 'schema_entries': schema_entries})
+    return render(request, 'docs/pop_form.html', {'formset':formset, 'schema_entries': schema_entries, 'schema':schema })
 
 
 # Anonymously populate a schema and create documents using a schema uuid link
@@ -293,7 +293,7 @@ def anon_pop_schema(request, schema_uuid):
                 tpl.save(byte_io) #save data to a file-like object
                 byte_io.seek(0) #go to the beginning of a file-like object
                 return FileResponse(byte_io, as_attachment=True, filename=f'generated.docx') #TO DO: Option to name the file
-    return render(request, 'docs/anon_pop_form.html', {'formset':formset, 'schema_entries': schema_entries})
+    return render(request, 'docs/anon_pop_form.html', {'formset':formset, 'schema_entries': schema_entries, 'schema':schema })
 
 def schema_link(request, schema_id):
     schema = TemplateSchema.objects.get(pk=schema_id) # get schema object from ID

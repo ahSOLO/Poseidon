@@ -46,9 +46,13 @@
     </nav>
     <div class="container-fluid">     
         <div class="row">   
+            {% if user.is_authenticated %}
             <div class="order-1 mr-sm-auto col-md-8 order-md-2 col-lg-7 px-4 mt-4">
-            {% block content %}
-            {% endblock content %}
+            {% else %}
+            <div class="order-1 ml-sm-auto mr-sm-auto col-md-8 order-md-2 col-lg-7 px-4 mt-4">
+            {% endif %}
+                {% block content %}
+                {% endblock content %}
             </div>
             {% if user.is_authenticated %}
             <nav class="order-2 col-md-2 order-md-1 d-md-block bg-light">

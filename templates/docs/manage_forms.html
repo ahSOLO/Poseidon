@@ -10,7 +10,6 @@
 <h3> Please select a Template </h3>
 <form action="" method="post">
 {{ template_selection|crispy }} 
-<br>
 <h5>Create a new form for the selected template</h5>
     {% csrf_token %}
     {{ creation_form|crispy }}

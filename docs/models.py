@@ -13,7 +13,6 @@ class Template(models.Model):
 
   # Fields
   name = models.CharField(max_length=50)
-  description = models.TextField(max_length=250)
   docx_file = models.FileField(("DOCX File"), 
     upload_to=user_directory_path, 
     validators=[FileExtensionValidator(allowed_extensions=['docx'])])
@@ -29,6 +28,7 @@ class TemplateSchema(models.Model):
   user = models.ForeignKey("users.CustomUser", on_delete=models.CASCADE)
 
   # Fields
+  description = models.TextField(max_length=250, null=True, blank=True)
   name = models.CharField(max_length=50)
   uuid = models.UUIDField(default=uuid.uuid4, editable=False)
   created = models.DateTimeField(auto_now_add=True, editable=False)

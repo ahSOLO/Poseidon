@@ -7,6 +7,10 @@
 {% load crispy_forms_tags %}
 {% load template_tags %}
 
+<h3> {{ schema.name }} </h3>
+<p> {{ schema.description }} </p>
+<br>
+
 <form class="form-horizontal" method="POST" action="">
   {% csrf_token %}
   {{ formset.management_form }} {% for form, schema_entry in formset|zip:schema_entries  %} 

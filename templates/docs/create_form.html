@@ -3,13 +3,14 @@
 {% block title %}Create Form{% endblock title %}
 
 {% block content %}
+{% load crispy_forms_tags %}
 
 <h3>Please name your form</h3>
 <p> Congratulations on uploading your template. The next step is to create a form to pair with this template. Forms are a collection of prompts that are used to collect information to be 
 inserted into the final document. To begin the form creation process, start by naming your form.
 <form action="" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form|crispy }}
     <button class="btn btn-success ml-2" type="submit">Create</button>
 </form>
 {% endblock content %}
