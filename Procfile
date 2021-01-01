@@ -1,1 +1,1 @@
-web: gunicorn Poseidon.wsgi --log-file--
+web: gunicorn Poseidon.wsgi --log-file -
