@@ -252,7 +252,7 @@ def pop_schema(request, schema_id, entryset_id=""): # entryset_id is an optional
                 tpl.render(dic)
                 tpl.save(byte_io) #save data to a file-like object
                 byte_io.seek(0) #go to the beginning of a file-like object
-                return FileResponse(byte_io, as_attachment=True, filename=f'Poseidon Document.docx') #TO DO: Option to name the file
+                return FileResponse(byte_io, as_attachment=True, filename=f'Poseidon_{schema.name}.docx') #TO DO: Option to name the file
     return render(request, 'docs/pop_form.html', {'formset':formset, 'schema_entries': schema_entries, 'schema':schema })
 
 
@@ -292,7 +292,7 @@ def anon_pop_schema(request, schema_uuid):
                 tpl.render(dic)
                 tpl.save(byte_io) #save data to a file-like object
                 byte_io.seek(0) #go to the beginning of a file-like object
-                return FileResponse(byte_io, as_attachment=True, filename=f'generated.docx') #TO DO: Option to name the file
+                return FileResponse(byte_io, as_attachment=True, filename=f'Poseidon_{schema.name}.docx') #TO DO: Option to name the file
     return render(request, 'docs/anon_pop_form.html', {'formset':formset, 'schema_entries': schema_entries, 'schema':schema })
 
 def schema_link(request, schema_id):
