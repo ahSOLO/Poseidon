@@ -1,6 +1,6 @@
 # Poseidon
 
-![screenshot](demo/ss1)
+![screenshot](demo/ss1.png)
 
 <h2>About</h2>
 
